@@ -34,7 +34,7 @@
                 layout="prev, pager, next, jumper"
                 :total="total">
         </el-pagination>
-        <el-dialog  :visible.sync="outerVisible" center style="padding: 0;margin: 0">
+        <el-dialog  :visible.sync="outerVisible" center style="padding: 0;margin: 0" width="60%">
             <div slot="title" class="dialog-title" style="font-size: 14px">常数项列表</div>
             <el-input placeholder="请输入常数项编码或名称" size="mini" v-model="itemName" style="width: 170px;margin-right:10px;margin-left: 30px;: "></el-input>
             <el-select v-model="value" placeholder="所属分类" size="mini" style="width: 140px;margin: 0 10px">
@@ -57,17 +57,13 @@
                     @selection-change="handleSelectionChange">
                 <el-table-column
                         type="selection"
-                        width="55">
+                        width="80%">
                 </el-table-column>
                 <el-table-column
                     prop="constantCode"
                     label="常数项编码"
                     width="120">
             </el-table-column>
-                <el-table-column
-                        width="120">
-                    <el-checkbox false-label="0" true-label="1" @change="change1"></el-checkbox>
-                </el-table-column>
                 <el-table-column
                         prop="constantName"
                         label="常数项名称"
