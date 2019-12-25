@@ -1,13 +1,13 @@
 <template>
     <div class="app">
         <div>
-            <span class="text">*</span>发票号：<el-input size="mini" v-model="invoice.invoicenum" placeholder="发票号" style="width: 140px;margin:8px 0;margin-right: 50px"></el-input> <el-button size="mini" type="primary" class="el-icon-edit" @click="registerd">挂号</el-button><el-button size="mini" type="primary" class="el-icon-refresh" @click="clear">清空</el-button>
+            <span class="text">*</span>发票号：<el-input size="mini" v-model="register.invoice.invoicenum" placeholder="发票号" style="width: 140px;margin:8px 0;margin-right: 50px"></el-input> <el-button size="mini" type="primary" class="el-icon-edit" @click="registerd">挂号</el-button><el-button size="mini" type="primary" class="el-icon-refresh" @click="clear">清空</el-button>
         </div>
         <div>
             <span>挂号信息</span><br>
             <span class="text" style="letter-spacing:12px">*</span>病历号：<el-input v-model="register.casenumber" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px"></el-input>
             <span class="text">*</span><label>姓<i style="padding-left: 24px"></i>名：</label><el-input v-model="register.realname" placeholder="输入姓名" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px"></el-input>
-            <span class="text">*</span>性<i style="padding-left: 24px"></i>别：<el-select v-model="register.gender" placeholder="请选择" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px">
+            <span class="text">*</span>性<i style="padding-left: 24px"></i>别：<el-select v-model="register.gender" placeholder="性别" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px">
                 <el-option
                         v-for="item in genderOptions"
                         :key="item.id"
@@ -40,7 +40,7 @@
             </span>
             身份证号：<el-input v-model="register.idnumber" placeholder="在此输入身份证号" size="mini" style="width: 200px;margin:8px 0;margin-right: 50px"></el-input>
             家庭住址：<el-input v-model="register.homeaddress" placeholder="在此输入家庭住址" size="mini" style="width: 200px;margin:8px 0;margin-right: 50px"></el-input>
-            <br><span class="text">*</span>结算类别：<el-select v-model="register.settleid" placeholder="请选择" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px">
+            <br><span class="text">*</span>结算类别：<el-select v-model="register.settleid" placeholder="结算类别" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px">
                 <el-option
                         v-for="item in settleOptions"
                         :key="item.id"
@@ -76,7 +76,7 @@
                 </el-option>
             </el-select>
             <br>
-            <span class="text">*</span>号<i style="padding-left: 24px"></i>别：<el-select v-model="register.registleid" placeholder="请选择" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px" @change="registlevelchange">
+            <span class="text">*</span>号<i style="padding-left: 24px"></i>别：<el-select v-model="register.registleid" placeholder="号别" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px" @change="registlevelchange">
                 <el-option
                         v-for="item in registlevelOptions"
                         :key="item.id"
@@ -96,8 +96,8 @@
             <i style="padding-left: 6px"></i>初始号额：<el-input v-model="registQuota" placeholder="初始号额" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px"></el-input>
             <i style="padding-left: 6px"></i>已用号额：<el-input size="mini" v-model="registquotaUsed" placeholder="已用号额" style="width: 140px;margin:8px 0;margin-right: 50px"></el-input>
             <br><i style="padding-left: 6px"></i><span style="letter-spacing: 6px">病历本</span><el-checkbox size="mini" style="margin:8px 0;margin-right: 183px" v-model="register.isbook" @change="valueChange"></el-checkbox>
-            <span class="text">*</span>应收金额：<el-input size="mini" v-model="invoice.money" style="width: 140px;margin:8px 0;margin-right: 50px"></el-input>
-            <span class="text">*</span>收费方式：<el-select v-model="charge" placeholder="请选择" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px">
+            <span class="text">*</span>应收金额：<el-input size="mini" placeholder="应收金额" v-model="register.invoice.money" style="width: 140px;margin:8px 0;margin-right: 50px"></el-input>
+            <span class="text">*</span>收费方式：<el-select v-model="register.invoice.feetype" placeholder="收费方式" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px">
             <el-option
                     v-for="item in chargeOptions"
                     :key="item.id"
@@ -138,22 +138,22 @@
                   registtime:'',
                   registerid:'',
                   visitstate:1,
+                  invoice:{
+                      invoicenum:'',
+                      money:'',
+                      state:1,
+                      creationtime:'',
+                      userid:'',
+                      registid:'',
+                      feetype:'',
+                      back:'',
+                      dailystate:0,
+                  },
               },
-              invoice:{
-                  invoicenum:'',
-                  money:'',
-                  state:1,
-                  creationtime:'',
-                  userid:'',
-                  registid:'',
-                  feetype:'',
-                  back:'',
-                  dailystate:'',
-              },
+
               invoiceNum:'',
               registquotaUsed:'',
               registQuota:'',
-              charge:'',
               chargeOptions:[],
               doctorOptions:[],
               registlevelOptions:[],
@@ -192,7 +192,7 @@
                 this.register.realname='';
                 this.register.gender='';
                 this.register.age='';
-                this.register.agetype=1;
+                this.register.agetype='岁';
                 this.register.birthdate='';
                 this.register.idnumber='';
                 this.register.homeaddress='';
@@ -203,14 +203,17 @@
                 this.registQuota='';
                 this.registquotaUsed='';
                 this.register.isbook=false;
-                this.registfee='';
-                this.charge='';
+                this.register.invoice.money='';
+                this.register.invoice.feetype='';
             },
             registerd(){
                 let date = new Date();
+                this.register.invoice.creationtime=date;
                 this.register.registtime=date;
+
                 let user = window.sessionStorage.getItem('user');
                 this.register.registerid=JSON.parse(user).id;
+                this.register.invoice.userid=JSON.parse(user).id;
               this.postRequest('/addRegister',this.register).then(resp=>{
                   if(resp){
                         this.clear();
@@ -251,7 +254,7 @@
             registlevelchange(value){
                 this.getRequest('/searchOneRegistlevel?id='+value).then(resp=>{
                     if(resp){
-                        this.invoice.money=resp.registfee;
+                        this.register.invoice.money=resp.registfee;
                         this.registQuota=resp.registquota;
                     }
                 })
@@ -303,7 +306,7 @@
                 });
                 this.getRequest('/searchInvoice').then(resp=>{
                     if(resp){
-                        this.invoice.invoicenum=Number(resp.invoicenum)+1;
+                        this.register.invoice.invoicenum=Number(resp.invoicenum)+1;
 
                     }
                 });
