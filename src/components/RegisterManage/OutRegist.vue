@@ -47,13 +47,18 @@
             </el-table-column>
             <el-table-column label="操作" width="200px">
                 <template slot-scope="scope">
+
                     <el-button
+                            v-if="scope.row.visitstate!=1"
+                            disabled
                             size="mini"
-                            @click="handleEdit(scope.row)">编辑</el-button>
+                            type="primary"
+                            @click="handleEdit(scope.row)">退号</el-button>
                     <el-button
+                            v-if="scope.row.visitstate==1"
                             size="mini"
-                            type="danger"
-                            @click="handleDelete(scope.row) ">删除</el-button>
+                            type="primary"
+                            @click="handleEdit(scope.row)">退号</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -71,6 +76,7 @@
                 idnumber:'',
                 homeaddress:'',
                 registerInfo:[],
+                disabled:false
 
             }
         },
@@ -95,6 +101,9 @@
                             this.realname=resp[i].realname;
                             this.idnumber=resp[i].idnumber;
                             this.homeaddress=resp[i].homeaddress;
+                            if(resp[i].visitstate!=1){
+                                this.disabled=true
+                            }else{this.disabled=false}
                         }
 
 
@@ -102,9 +111,22 @@
                 })
             },
             handleEdit(row){
-
-            },
-            handleDelete(row){
+                this.$confirm('是否确定退号?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.putRequest('/updateVisitstate?id='+row.id).then(resp=>{
+                        if(resp){
+                            this. searchBtn();
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消退号'
+                    });
+                });
 
             },
         }

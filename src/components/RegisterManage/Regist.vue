@@ -5,7 +5,7 @@
         </div>
         <div>
             <span>挂号信息</span><br>
-            <span class="text" style="letter-spacing:12px">*</span>病历号：<el-input v-model="register.casenumber" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px"></el-input>
+            <span class="text" style="letter-spacing:12px">*</span>病历号：<el-input v-model="register.casenumber" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px" @keyup.enter.native="searchByCasenumber"></el-input>
             <span class="text">*</span><label>姓<i style="padding-left: 24px"></i>名：</label><el-input v-model="register.realname" placeholder="输入姓名" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px"></el-input>
             <span class="text">*</span>性<i style="padding-left: 24px"></i>别：<el-select v-model="register.gender" placeholder="性别" size="mini" style="width: 140px;margin:8px 0;margin-right: 50px">
                 <el-option
@@ -209,7 +209,7 @@
             registerd(){
                 let date = new Date();
                 this.register.invoice.creationtime=date;
-                this.register.registtime=date;
+                this.changeDate(date);
 
                 let user = window.sessionStorage.getItem('user');
                 this.register.registerid=JSON.parse(user).id;
@@ -313,12 +313,28 @@
             },
             changeDate(date){
                 let year=date.getFullYear();
-                let month=date.getMonth()+1;
+                let month=date.getMonth();
                 let data=date.getDate();
                 let hour=date.getHours();
                 let minute=date.getMinutes();
                 let second=date.getSeconds();
-                this.register.registtime=year+'-'+month+'-'+data+' '+hour+':'+minute+':'+second
+                this.register.registtime=year+'-'+month+'-'+data+' '+hour+':'+minute+':'+second;
+            },
+            searchByCasenumber(){
+                this.getRequest('searchOneRegisterByCasenumber?casenumber='+this.register.casenumber).then(resp=>{
+                    if(resp){
+                        if(resp.counts>0){
+                                this.register.realname= resp.realname;
+                                this.register.gender=resp.gender;
+                                this.register.idnumber=resp.idnumber;
+                                this.register.birthdate=resp.birthdate;
+                                this.register.age=resp.age;
+                                this.register.agetype=resp.agetype;
+                                this.register.homeaddress=resp.homeaddress;
+                        }
+
+                    }
+                })
             }
         },
         mounted() {

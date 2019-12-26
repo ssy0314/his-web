@@ -178,10 +178,10 @@
                     :visible.sync="centerDialogVisible4"
                     width="35%"
                     center>
-                疾病编码：<el-input v-model="registleve3.diseasecode" placeholder="疾病编码" size="mini" class="abc"></el-input>
-                疾病名称：<el-input v-model="registleve3.diseasename" placeholder="疾病名称" size="mini" class="abc"></el-input>
-                国际ICD编码：<el-input v-model="registleve3.diseaseicd" placeholder="国际ICD编码" size="mini" class="abc"></el-input>
-                疾病所属类型：<el-select v-model="registleve3.disecategoryid" placeholder="疾病所属类型" size="mini" class="abc">
+                <span style="font-size:12px;margin-left:20px" >疾病编码：</span><el-input v-model="registleve3.diseasecode" placeholder="疾病编码" size="mini" class="abc"></el-input>
+                <span style="font-size:12px;margin-left:24px">疾病名称：</span><el-input v-model="registleve3.diseasename" placeholder="疾病名称" size="mini" class="abc"></el-input>
+                <br><span style="font-size:12px;">国际ICD编码：</span><el-input v-model="registleve3.diseaseicd" placeholder="国际ICD编码" size="mini" class="abc"></el-input>
+                <span style="font-size:12px;">疾病所属类型：</span><el-select v-model="registleve3.disecategoryid" placeholder="疾病所属类型" size="mini" class="abc">
                 <el-option
                         v-for="item in deptList3"
                         :key="item.id"
@@ -206,7 +206,7 @@
                     center>
                 疾病编码：<el-input v-model="registleve4.diseasecode" placeholder="疾病编码" size="mini" class="abc"></el-input>
                 疾病名称：<el-input v-model="registleve4.diseasename" placeholder="疾病名称" size="mini" class="abc"></el-input>
-                国际ICD编码：<el-input v-model="registleve4.diseaseicd" placeholder="国际ICD编码" size="mini" class="abc"></el-input>
+                <br/>国际ICD编码：<el-input v-model="registleve4.diseaseicd" placeholder="国际ICD编码" size="mini" class="abc"></el-input>
                 疾病所属类型：<el-select v-model="registleve4.disecategoryid" placeholder="疾病所属类型" size="mini" class="abc">
                 <el-option
                         v-for="item in deptList4"
