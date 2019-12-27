@@ -1,29 +1,24 @@
 <template>
+<!--  发票重打  -->
     <div>
         <div>患者信息查询</div>
-        <el-form :inline="true" :model="patient" class="demo-form-inline">
-            <el-form-item label="病历号：">
-                <el-input v-model="patient.casenumber" size="mini" placeholder="病历号"></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button @click="searchBtn" type="primary" size="mini">搜索</el-button>
-            </el-form-item>
-        </el-form>
+        <span>病例号：</span><el-input v-model="casenumber" size="mini" placeholder="病历号" style="width: 100px;margin: 8px"></el-input>
+        <el-button @click="searchBtn" type="primary" size="mini" class="el-icon-search">搜索</el-button>
         <div>患者信息确认</div>
-        <el-form :inline="true" :model="regist"  class="demo-form-inline">
+        <el-form :inline="true" :model="register"  class="demo-form-inline">
             <el-form-item label="姓 名：">
-                <el-input v-model="regist.realname" size="mini" placeholder="姓名"></el-input>
+                <el-input v-model="register.realname" size="mini" placeholder="姓名"></el-input>
             </el-form-item>
             <el-form-item label="身份证号：">
-                <el-input v-model="regist.idnumber" size="mini" placeholder="身份证号"></el-input>
+                <el-input v-model="register.idnumber" size="mini" placeholder="身份证号"></el-input>
             </el-form-item>
             <el-form-item label="家庭住址：">
-                <el-input v-model="regist.homeaddress" size="mini" placeholder="家庭住址"></el-input>
+                <el-input v-model="register.homeaddress" size="mini" placeholder="家庭住址"></el-input>
             </el-form-item>
         </el-form>
         <div>患者发票信息</div>
         <el-table
-                :data="patientInfo"
+                :data="registerInfo"
                 style="width: 100%"
         >
             <el-table-column
@@ -36,35 +31,34 @@
                     width="180">
             </el-table-column>
             <el-table-column
-                    prop="register.realname"
+                    prop="invoicenum"
                     label="发票号"
                     width="180">
             </el-table-column>
             <el-table-column
-                    prop="name"
+                    prop="register.realname"
                     label="姓名">
             </el-table-column>
             <el-table-column
-                    prop="price"
+                    prop="money"
                     label="金额">
             </el-table-column>、
             <el-table-column
-                    prop="amount"
+                    prop="state"
+                    :formatter="formatter"
                     label="发票状态">
             </el-table-column>
             <el-table-column
-                    prop="createtime"
+                    prop="register.visitdate"
                     label="看诊日期">
             </el-table-column>
             <el-table-column label="操作" >
                 <template slot-scope="scope">
                     <el-button
                             size="mini"
-                            @click="handleEdit(scope.row)">编辑</el-button>
-                    <el-button
-                            size="mini"
-                            type="danger"
-                            @click="handleDelete(scope.row) ">删除</el-button>
+                            type="primary"
+                            class="el-icon-printer"
+                            @click="handleEdit(scope.row)">发票重打</el-button>
                 </template>
             </el-table-column>
 
@@ -77,22 +71,9 @@
         name: "FlogHeavily",
         data(){
             return{
-                count:'',
-                priceSum:'',
-                patient:{
-                    casenumber:'',
-                    starttime:'',
-                    endtime:'',
-                    // IDnumber:'',
-                    // HomeAddress:'',
-                    // realName:'',
-                    // name:'',
-                    // price:'',
-                    // amount:'',
-                    // createTime:''
-                },
-                patientInfo:[],
-                regist:{
+                casenumber:'',
+                registerInfo:[],
+                register:{
                     realname:'',
                     homeaddress:'',
                     idnumber:''
@@ -100,18 +81,27 @@
             }
         },
         methods:{
+            formatter(){
+                return '未打印'
+            },
+            handleEdit(row){
+                this.putRequest('/updateFlogHeavily?id='+row.id).then(resp=>{
+                    if(resp){
+                        this.searchBtn();
+                    }
+                })
+            },
             searchBtn(){
-                this.getRequest('/searchPatientInfo',this.patient).then(resp=>{
-                    this.regist=resp;
-                }),
-                    this.getRequest('/getPatientCosts',this.patient).then(resp=>{
-                        this.patientInfo=resp;
-                    }),
-                    this.getRequest('/getCount',this.patient).then(resp=>{
-                        console.log(resp);
-                        this.count=resp.count;
-                        this.priceSum=resp.sum;
-                    })
+                this.getRequest('/searchInvoiceInformation?casenumber='+this.casenumber).then(resp=>{
+                    console.log(resp)
+                    for (let i = 0; i <1; i++) {
+                        this.registerInfo=resp[i].invoices;
+                        this.register.realname=resp[i].realname;
+                        this.register.homeaddress=resp[i].homeaddress;
+                        this.register.idnumber=resp[i].idnumber;
+                    }
+                })
+
             }
         }
     }

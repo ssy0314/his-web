@@ -1,4 +1,5 @@
 <template>
+<!-- 退号   -->
     <div>
         <div>患者信息查询</div>
                 <span>病历号:</span><el-input v-model="casenumber" size="mini" placeholder="病历号" style="width: 10%;margin: 8px"></el-input>

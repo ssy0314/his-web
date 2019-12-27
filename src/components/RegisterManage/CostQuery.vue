@@ -1,4 +1,5 @@
 <template>
+<!--  患者费用查询  -->
     <div>
         <div>患者信息查询</div>
         <el-form :inline="true" :model="patient" class="demo-form-inline">

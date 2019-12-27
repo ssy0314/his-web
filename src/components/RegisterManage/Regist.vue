@@ -1,4 +1,5 @@
 <template>
+<!-- 挂号   -->
     <div class="app">
         <div>
             <span class="text">*</span>发票号：<el-input size="mini" v-model="register.invoice.invoicenum" placeholder="发票号" style="width: 140px;margin:8px 0;margin-right: 50px"></el-input> <el-button size="mini" type="primary" class="el-icon-edit" @click="registerd">挂号</el-button><el-button size="mini" type="primary" class="el-icon-refresh" @click="clear">清空</el-button>
@@ -141,7 +142,7 @@
                   invoice:{
                       invoicenum:'',
                       money:'',
-                      state:1,
+                      state:3,
                       creationtime:'',
                       userid:'',
                       registid:'',

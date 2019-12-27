@@ -1,4 +1,5 @@
 <template>
+<!-- 收费   -->
     <div>
         <div>患者信息查询</div>
                 <span>病例号：</span><el-input v-model="casenumber" size="mini" placeholder="病历号" style="width: 100px;margin: 8px"></el-input>
@@ -26,21 +27,21 @@
                     width="80%">
             </el-table-column>
             <el-table-column
-                    prop="casenumber"
+                    prop="register.casenumber"
                     label="病历号"
                     width="180">
             </el-table-column>
             <el-table-column
-                    prop="realname"
+                    prop="register.realname"
                     label="姓名"
                     width="180">
             </el-table-column>
             <el-table-column
-                    prop="itemname"
+                    prop="fmeditem.itemname"
                     label="项目名称">
             </el-table-column>
             <el-table-column
-                    prop="price"
+                    prop="fmeditem.price"
                     label="单价">
             </el-table-column>、
             <el-table-column
@@ -67,9 +68,24 @@
                 width="30%"
                 center>
             <span slot="title" class="title">发票信息（交费）</span>
+            <span style="font-size: 12px;margin-left: 12px">发票号：</span><el-input v-model="invoice.invoicenum" size="mini" style="width: 100px;margin-right: 24px;margin-bottom: 12px"></el-input>
+            <span style="font-size: 12px;margin-left: 12px">病例号：</span><el-input v-model="casenumber" size="mini" style="width: 100px"></el-input>
+            <br><span style="font-size: 12px">患者姓名：</span><el-input v-model="register.realname" size="mini" style="width: 100px;margin-right: 24px;margin-bottom: 12px"></el-input>
+            <span style="font-size: 12px">支付方式：</span>
+            <el-select v-model="invoice.feetype" placeholder="支付方式" size="mini" style="width: 100px">
+            <el-option
+                    v-for="item in chargeOptions"
+                    :key="item.id"
+                    :label="item.constantName"
+                    :value="item.id">
+            </el-option>
+        </el-select>
+            <br><span style="font-size: 12px">应收金额：</span><el-input v-model="invoice.money" size="mini" style="width: 100px;margin-right: 24px;margin-bottom: 12px"></el-input>
+            <span style="font-size: 12px">实收金额：</span><el-input v-model="charged" size="mini" style="width: 100px" @keyup.enter.native="changeBtn"></el-input>
+            <br><span style="font-size: 12px">找零金额：</span><el-input v-model="change" size="mini" style="width: 100px"></el-input>
             <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false" size="mini">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false" size="mini">确 定</el-button>
+    <el-button @click="dialogVisible = false" size="mini" type="warning">取 消</el-button>
+    <el-button type="primary" @click="printInvoice" size="mini">确 定</el-button>
   </span>
         </el-dialog>
     </div>
@@ -79,40 +95,79 @@
         name: "Charge",
         data(){
             return{
+                charged:'',
+                change:'',
                 dialogVisible:false,
                 disabled:true,
                 display:false,
                 registerInfo:[],
-                count:'',
-                priceSum:'',
+                chargeOptions:[],
+                ids:[],
                 casenumber:'',
                 register:{
                     realname:'',
                     homeaddress:'',
                     idnumber:''
-                }
+                },
+                invoice:{
+                    invoicenum:'',
+                    money:0,
+                    state:3,
+                    creationtime:'',
+                    userid:'',
+                    registid:'',
+                    feetype:'',
+                    back:'',
+                    dailystate:0,
+                },
             }
         },
         methods:{
+            printInvoice(){
+                let date = new Date();
+                this.invoice.creationtime=date;
+                this.invoice.userid=JSON.parse(window.sessionStorage.getItem('user')).id;
+                this.delManyRequest('/updateState',this.ids).then(resp=>{
+                    if(resp){
+                        this.postRequest('/addInvoice',this.invoice).then(resp=>{
+                            if(resp){
+                                this.dialogVisible = false;
+                                this.searchBtn();
+                            }
+                        });
+                    }
+                });
+
+            },
+            changeBtn(){
+                this.change=Number(this.charged)-Number(this.invoice.money);
+            },
             formatter(row){
                 return '已开立'
             },
             handleSelection(data){
+                this.ids=[];
+                this.invoice.money=0;
                 if(data.length>0){
                     this.disabled=false;
                 }else{this.disabled=true}
+                for (let i = 0; i <data.length ; i++) {
+                    this.ids.push(data[i].id);
+                    this.invoice.money+=Number(data[i].fmeditem.price*data[i].num);
+                }
             },
             searchBtn(){
                 this.getRequest('/searchRegisterByasenumber?casenumber='+this.casenumber).then(resp=>{
                    if(resp){
-                       this.registerInfo=resp;
                        if(resp.length>0){
                         this.display=true;
                        }else { this.display=false;}
                        for (let i = 0; i <resp.length; i++) {
-                           this.register.realname=resp[i].realname
-                           this.register.homeaddress=resp[i].homeaddress
-                           this.register.idnumber=resp[i].idnumber
+                           this.registerInfo=resp[i].lists;
+                           this.register.realname=resp[i].realname;
+                           this.register.homeaddress=resp[i].homeaddress;
+                           this.register.idnumber=resp[i].idnumber;
+                           this.invoice.registid=resp[i].id;
                        }
                    }
                 })
@@ -125,6 +180,17 @@
                     type: 'warning'
                 }).then(() => {
                     this.dialogVisible=true;
+                    this.getRequest('/searchInvoice').then(resp=>{
+                        if(resp){
+                            this.invoice.invoicenum=Number(resp.invoicenum)+1;
+                        }
+                    });
+                    this.getRequest('/searchCharge').then(resp=>{
+                        if(resp){
+                            this.chargeOptions=resp;
+
+                        }
+                    });
                 }).catch(() => {
                     this.$message({
                         type: 'info',
