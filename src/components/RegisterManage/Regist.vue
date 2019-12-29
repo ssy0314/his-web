@@ -226,17 +226,17 @@
                     let date = new Date(this.register.birthdate)
                     let nowDate = new Date()
                     this.register.age=nowDate.getFullYear()-date.getFullYear()
-                    console.log(this.register.age)
+
                 }else if(this.register.agetype=='月'){
                     let date = new Date(this.register.birthdate)
                     let nowDate = new Date()
                     this.register.age=(nowDate.getFullYear()-date.getFullYear())*12+(nowDate.getMonth()+1)-(date.getMonth()+1)
-                    console.log(this.register.age)
+
                 }else if(this.register.agetype=='天'){
                     let date = new Date(this.register.birthdate)
                     let nowDate = new Date()
                     this.register.age=Math.floor((nowDate.getTime()-date.getTime())/1000/60/60/24)
-                    console.log(this.register.age)
+
                 }
 
             },

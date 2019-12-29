@@ -13,17 +13,16 @@
                     type="date"
                     value-format="yyyy-MM-dd"
                     placeholder="选择日期"
-                    readonly
+                    :picker-options="options0"
                     size="mini"
                     style="width: 130px;margin-right:5px">
             </el-date-picker>
             <el-time-picker
                     v-model="dailyTime"
-                    :picker-options="pickerOptions0"
                     placeholder="任意时间点"
                     size="mini"
-                    format="HH:mm:ss"
-                    value-format="yyyy-MM-dd hh:mm:ss"
+                    :picker-options="{selectableRange:`${nowTime} - 23:59:00`}"
+                    value-format="yyyy-MM-dd HH:mm:ss"
                     @change="change"
                     style="width: 150px;margin-right:30px">
             </el-time-picker>
@@ -83,10 +82,7 @@
         name: "Daily",
         data(){
             return{
-                pickerOptions0:{
-                    disabledDate(time){
-                return time.getTime() < Date.now() - 8.64e7;//如果没有后面的-8.64e7就是不可以选择今天的
-            }},
+                nowTime:'',
                 registUser:'',
                 sum:'',
                 badInvoice:[],
@@ -109,6 +105,9 @@
             }
         },
         methods:{
+            minTime(){
+                return '{selectableRange:'+Date.now()+'- 23:59:59}'
+            },
             dailyBtn(){
                 this.$confirm('是否确定日结?', '提示', {
                     confirmButtonText: '确定',
@@ -129,6 +128,7 @@
 
             },
             change(){
+                this.nowTime=new Date();
                 this.registWork.endtime=this.dailyTime;
             },
             searchBtn(){
@@ -181,7 +181,7 @@
             },
             changeTime(date){
                 let year=date.getFullYear();
-                let month=date.getMonth();
+                let month=date.getMonth()+1;
                 let data=date.getDate();
                 let hour=date.getHours();
                 let minute=date.getMinutes();
@@ -202,6 +202,7 @@
             },
         },
         mounted() {
+            this.nowTime=new Date();
             this.registWork.registerid=JSON.parse(window.sessionStorage.getItem('user')).id;
             this.registUser=JSON.parse(window.sessionStorage.getItem('user')).realname;
             this.initBeforeEndTime();
